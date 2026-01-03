@@ -12,6 +12,15 @@ class UserBase(SQLModel):
 class UserCreate(UserBase):
     password: str
 
+# Properties to receive via API on update
+class UserUpdate(SQLModel):
+    email: EmailStr | None = None
+    full_name: str | None = None
+
+class UpdatePassword(SQLModel):
+    current_password: str
+    new_password: str
+
 # Properties to return via API
 class UserPublic(UserBase):
     id: int
@@ -25,6 +34,7 @@ class User(UserBase, table=True):
 class Token(SQLModel):
     access_token: str
     token_type: str
+    refresh_token: str
 
 class TokenData(SQLModel):
     sub: str | None = None

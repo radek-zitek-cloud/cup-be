@@ -7,10 +7,10 @@ A scalable, high-performance backend service built with FastAPI and PostgreSQL.
 Full documentation is available in the `docs/` directory. You can also run it locally:
 
 ```bash
-uv run mkdocs serve -a localhost:8008
+make docs
 ```
 
-Then open [http://localhost:8008](http://localhost:8008) (or the port specified by mkdocs).
+Then open [http://localhost:8008](http://localhost:8008).
 
 ## Quick Start
 
@@ -21,12 +21,15 @@ Then open [http://localhost:8008](http://localhost:8008) (or the port specified 
 
 2.  Start the containers:
     ```bash
-    docker compose up -d --build
+    make up
     ```
 
 3.  Run migrations:
     ```bash
-    docker compose exec web uv run alembic upgrade head
+    make docker-migrate
     ```
 
 The API will be available at [http://localhost:8000](http://localhost:8000).
+
+---
+*Tip: Use `make help` to see all available development commands.*

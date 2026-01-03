@@ -52,8 +52,10 @@
 To run the documentation locally for development:
 
 ```bash
-uv run mkdocs serve -a localhost:8008
+make docs
 ```
+
+Then open [http://localhost:8008](http://localhost:8008).
 
 ## Testing
 
