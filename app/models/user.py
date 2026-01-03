@@ -19,6 +19,10 @@ class UserUpdate(SQLModel):
     full_name: str | None = None
     is_super: bool | None = None
 
+class UserUpdateMe(SQLModel):
+    email: EmailStr | None = None
+    full_name: str | None = None
+
 class UpdatePassword(SQLModel):
     current_password: str
     new_password: str

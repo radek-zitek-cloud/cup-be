@@ -117,6 +117,28 @@ def test_update_me(client: TestClient):
     assert response.status_code == 200
     assert response.json()["full_name"] == "New Name"
 
+def test_update_me_is_super_no_effect(client: TestClient):
+    client.post(
+        "/api/v1/users/signup",
+        json={"email": "test@example.com", "password": "password123"},
+    )
+    login_res = client.post(
+        "/api/v1/login/access-token",
+        data={"username": "test@example.com", "password": "password123"},
+    )
+    token = login_res.json()["access_token"]
+    
+    # Attempt to set is_super to True
+    response = client.patch(
+        "/api/v1/users/me",
+        headers={"Authorization": f"Bearer {token}"},
+        json={"is_super": True},
+    )
+    # Depending on how Pydantic handles extra fields, it might succeed (ignoring extra) or fail.
+    # SQLModel/Pydantic by default ignores extra fields if not configured otherwise.
+    assert response.status_code == 200
+    assert response.json()["is_super"] is False
+
 def test_update_password(client: TestClient):
     client.post(
         "/api/v1/users/signup",

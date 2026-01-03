@@ -4,7 +4,7 @@ from sqlmodel import select
 
 from app.api import deps
 from app.core import security
-from app.models.user import User, UserCreate, UserPublic, UserUpdate, UpdatePassword
+from app.models.user import User, UserCreate, UserPublic, UserUpdate, UpdatePassword, UserUpdateMe
 
 router = APIRouter()
 
@@ -61,7 +61,7 @@ def read_user_me(current_user: deps.CurrentUser) -> Any:
 
 @router.patch("/me", response_model=UserPublic)
 def update_user_me(
-    *, session: deps.SessionDep, user_in: UserUpdate, current_user: deps.CurrentUser
+    *, session: deps.SessionDep, user_in: UserUpdateMe, current_user: deps.CurrentUser
 ) -> Any:
     """
     Update own user profile.
