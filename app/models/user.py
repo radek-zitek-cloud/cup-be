@@ -27,4 +27,4 @@ class Token(SQLModel):
     token_type: str
 
 class TokenData(SQLModel):
-    email: str | None = None
+    sub: str | None = None
