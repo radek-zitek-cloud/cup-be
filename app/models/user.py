@@ -1,0 +1,30 @@
+from typing import Optional
+from sqlmodel import Field, SQLModel
+from pydantic import EmailStr
+
+# Shared properties
+class UserBase(SQLModel):
+    email: EmailStr = Field(unique=True, index=True)
+    is_active: bool = True
+    full_name: str | None = None
+
+# Properties to receive via API on creation
+class UserCreate(UserBase):
+    password: str
+
+# Properties to return via API
+class UserPublic(UserBase):
+    id: int
+
+# Database model
+class User(UserBase, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    hashed_password: str
+
+# Token
+class Token(SQLModel):
+    access_token: str
+    token_type: str
+
+class TokenData(SQLModel):
+    email: str | None = None
