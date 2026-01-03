@@ -10,6 +10,7 @@ services:
 
   web:
     build: .
+    image: cup-be-web:${TAG:-latest}
     ports:
       - "8000:80"
     env_file:
