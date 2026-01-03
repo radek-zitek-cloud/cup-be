@@ -47,7 +47,13 @@
 -   Automatic documentation (Swagger UI) is available at `http://localhost:8000/docs`.
 -   Alternative documentation (ReDoc) is available at `http://localhost:8000/redoc`.
 
-The project uses `uvicorn` with reload enabled in the Docker container, so changes to the source code will automatically trigger a reload.
+## Documentation
+
+To run the documentation locally for development:
+
+```bash
+uv run mkdocs serve -a localhost:8008
+```
 
 ## Testing
 

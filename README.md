@@ -7,10 +7,10 @@ A scalable, high-performance backend service built with FastAPI and PostgreSQL.
 Full documentation is available in the `docs/` directory. You can also run it locally:
 
 ```bash
-uv run mkdocs serve
+uv run mkdocs serve -a localhost:8008
 ```
 
-Then open [http://localhost:8000](http://localhost:8000) (or the port specified by mkdocs).
+Then open [http://localhost:8008](http://localhost:8008) (or the port specified by mkdocs).
 
 ## Quick Start
 
