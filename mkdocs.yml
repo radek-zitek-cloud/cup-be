@@ -1,0 +1,14 @@
+site_name: Cup Backend
+site_description: Documentation for the Cup Backend project.
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.expand
+    - content.code.copy
+
+nav:
+  - Home: index.md
+  - Setup: setup.md
+  - API: api.md
+  - Architecture: architecture.md
