@@ -10,5 +10,6 @@ theme:
 nav:
   - Home: index.md
   - Setup: setup.md
+  - Release: release.md
   - API: api.md
   - Architecture: architecture.md
