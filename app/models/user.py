@@ -6,6 +6,7 @@ from pydantic import EmailStr
 class UserBase(SQLModel):
     email: EmailStr = Field(unique=True, index=True)
     is_active: bool = True
+    is_super: bool = False
     full_name: str | None = None
 
 # Properties to receive via API on creation
@@ -16,6 +17,7 @@ class UserCreate(UserBase):
 class UserUpdate(SQLModel):
     email: EmailStr | None = None
     full_name: str | None = None
+    is_super: bool | None = None
 
 class UpdatePassword(SQLModel):
     current_password: str

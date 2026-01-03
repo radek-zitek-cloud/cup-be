@@ -39,6 +39,7 @@ def test_signup(client: TestClient):
     data = response.json()
     assert data["email"] == "test@example.com"
     assert data["full_name"] == "Test User"
+    assert data["is_super"] is False
     assert "id" in data
 
 def test_login(client: TestClient):
