@@ -74,15 +74,15 @@ The API will be available at [http://localhost:8000](http://localhost:8000).
     ```
 
 ### Database Management
-Migrations are handled by Alembic.
+Migrations are handled by Alembic. **They are automatically run on application startup** via a FastAPI lifespan event.
 
-*   **Apply Migrations:**
+*   **Manual Migrations:**
     ```bash
     # Via Docker
-    docker compose exec web uv run alembic upgrade head
+    make docker-migrate
     
     # Locally
-    uv run alembic upgrade head
+    make migrate
     ```
 
 *   **Create a New Migration:**

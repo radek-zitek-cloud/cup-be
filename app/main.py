@@ -1,10 +1,22 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from alembic import command
+from alembic.config import Config
+
 from app.core.config import settings
 from app.api.api_v1.api import api_router
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Run migrations on startup
+    alembic_cfg = Config("alembic.ini")
+    command.upgrade(alembic_cfg, "head")
+    yield
+
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    openapi_url=f"{settings.API_V1_STR}/openapi.json"
+    openapi_url=f"{settings.API_V1_STR}/openapi.json",
+    lifespan=lifespan
 )
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
