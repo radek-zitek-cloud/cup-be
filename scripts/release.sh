@@ -30,7 +30,7 @@ uv sync
 
 # Run tests
 echo "Running tests..."
-uv run pytest
+ENVIRONMENT=test uv run pytest
 
 # Commit change
 echo "Committing version bump..."
