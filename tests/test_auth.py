@@ -40,7 +40,7 @@ def test_signup(client: TestClient):
         "/api/v1/users/signup",
         json={
             "email": "test@example.com",
-            "password": "password123",
+            "password": "StrongPassword123",
             "full_name": "Test User",
         },
     )
@@ -56,13 +56,13 @@ def test_login(client: TestClient):
     # First signup
     client.post(
         "/api/v1/users/signup",
-        json={"email": "test@example.com", "password": "password123"},
+        json={"email": "test@example.com", "password": "StrongPassword123"},
     )
 
     # Then login
     response = client.post(
         "/api/v1/login/access-token",
-        data={"username": "test@example.com", "password": "password123"},
+        data={"username": "test@example.com", "password": "StrongPassword123"},
     )
     assert response.status_code == 200
     data = response.json()
@@ -74,11 +74,11 @@ def test_login(client: TestClient):
 def test_get_me(client: TestClient):
     client.post(
         "/api/v1/users/signup",
-        json={"email": "test@example.com", "password": "password123"},
+        json={"email": "test@example.com", "password": "StrongPassword123"},
     )
     login_res = client.post(
         "/api/v1/login/access-token",
-        data={"username": "test@example.com", "password": "password123"},
+        data={"username": "test@example.com", "password": "StrongPassword123"},
     )
     token = login_res.json()["access_token"]
 
@@ -93,11 +93,11 @@ def test_get_me(client: TestClient):
 def test_refresh_token(client: TestClient):
     client.post(
         "/api/v1/users/signup",
-        json={"email": "test@example.com", "password": "password123"},
+        json={"email": "test@example.com", "password": "StrongPassword123"},
     )
     login_res = client.post(
         "/api/v1/login/access-token",
-        data={"username": "test@example.com", "password": "password123"},
+        data={"username": "test@example.com", "password": "StrongPassword123"},
     )
     refresh_token = login_res.json()["refresh_token"]
 
@@ -116,13 +116,13 @@ def test_update_me(client: TestClient):
         "/api/v1/users/signup",
         json={
             "email": "test@example.com",
-            "password": "password123",
+            "password": "StrongPassword123",
             "full_name": "Old Name",
         },
     )
     login_res = client.post(
         "/api/v1/login/access-token",
-        data={"username": "test@example.com", "password": "password123"},
+        data={"username": "test@example.com", "password": "StrongPassword123"},
     )
     token = login_res.json()["access_token"]
 
@@ -138,11 +138,11 @@ def test_update_me(client: TestClient):
 def test_update_me_is_super_no_effect(client: TestClient):
     client.post(
         "/api/v1/users/signup",
-        json={"email": "test@example.com", "password": "password123"},
+        json={"email": "test@example.com", "password": "StrongPassword123"},
     )
     login_res = client.post(
         "/api/v1/login/access-token",
-        data={"username": "test@example.com", "password": "password123"},
+        data={"username": "test@example.com", "password": "StrongPassword123"},
     )
     token = login_res.json()["access_token"]
 
@@ -161,18 +161,21 @@ def test_update_me_is_super_no_effect(client: TestClient):
 def test_update_password(client: TestClient):
     client.post(
         "/api/v1/users/signup",
-        json={"email": "test@example.com", "password": "password123"},
+        json={"email": "test@example.com", "password": "StrongPassword123"},
     )
     login_res = client.post(
         "/api/v1/login/access-token",
-        data={"username": "test@example.com", "password": "password123"},
+        data={"username": "test@example.com", "password": "StrongPassword123"},
     )
     token = login_res.json()["access_token"]
 
     response = client.patch(
         "/api/v1/users/me/password",
         headers={"Authorization": f"Bearer {token}"},
-        json={"current_password": "password123", "new_password": "newpassword123"},
+        json={
+            "current_password": "StrongPassword123",
+            "new_password": "NewStrongPassword123",
+        },
     )
     assert response.status_code == 200
     assert response.json()["message"] == "Password updated successfully"
@@ -180,7 +183,7 @@ def test_update_password(client: TestClient):
     # Try login with new password
     response = client.post(
         "/api/v1/login/access-token",
-        data={"username": "test@example.com", "password": "newpassword123"},
+        data={"username": "test@example.com", "password": "NewStrongPassword123"},
     )
     assert response.status_code == 200
 
@@ -188,11 +191,11 @@ def test_update_password(client: TestClient):
 def test_logout(client: TestClient):
     client.post(
         "/api/v1/users/signup",
-        json={"email": "logout@example.com", "password": "password123"},
+        json={"email": "logout@example.com", "password": "StrongPassword123"},
     )
     login_res = client.post(
         "/api/v1/login/access-token",
-        data={"username": "logout@example.com", "password": "password123"},
+        data={"username": "logout@example.com", "password": "StrongPassword123"},
     )
     token = login_res.json()["access_token"]
 
@@ -231,19 +234,19 @@ def test_create_user_requires_admin(client: TestClient):
     # Signup regular user
     client.post(
         "/api/v1/users/signup",
-        json={"email": "regular@example.com", "password": "password123"},
+        json={"email": "regular@example.com", "password": "StrongPassword123"},
     )
     # Login regular user
     login_res = client.post(
         "/api/v1/login/access-token",
-        data={"username": "regular@example.com", "password": "password123"},
+        data={"username": "regular@example.com", "password": "StrongPassword123"},
     )
     token = login_res.json()["access_token"]
 
     response = client.post(
         "/api/v1/users/",
         headers={"Authorization": f"Bearer {token}"},
-        json={"email": "newuser@example.com", "password": "password123"},
+        json={"email": "newuser@example.com", "password": "StrongPassword123"},
     )
     assert response.status_code == 403
     assert "Not enough permissions" in response.json()["detail"]
@@ -251,7 +254,7 @@ def test_create_user_requires_admin(client: TestClient):
 
 def test_create_user_admin_success(client: TestClient, session: Session):
     # Manually create a superuser in the DB
-    hashed_password = security.get_password_hash("adminpassword")
+    hashed_password = security.get_password_hash("AdminPassword123")
     superuser = User(
         email="admin@example.com", hashed_password=hashed_password, is_super=True
     )
@@ -261,7 +264,7 @@ def test_create_user_admin_success(client: TestClient, session: Session):
     # Login as admin
     login_res = client.post(
         "/api/v1/login/access-token",
-        data={"username": "admin@example.com", "password": "adminpassword"},
+        data={"username": "admin@example.com", "password": "AdminPassword123"},
     )
     token = login_res.json()["access_token"]
 
@@ -271,7 +274,7 @@ def test_create_user_admin_success(client: TestClient, session: Session):
         headers={"Authorization": f"Bearer {token}"},
         json={
             "email": "newuser@example.com",
-            "password": "password123",
+            "password": "StrongPassword123",
             "is_super": True,
         },
     )

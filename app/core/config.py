@@ -41,6 +41,13 @@ class Settings(BaseSettings):
     RATE_LIMIT_SIGNUP: str = "3/hour"
     REDIS_URL: str | None = None  # For production: redis://localhost:6379
 
+    # Password Policy
+    PASSWORD_MIN_LENGTH: int = 8
+    PASSWORD_REQUIRE_UPPERCASE: bool = True
+    PASSWORD_REQUIRE_LOWERCASE: bool = True
+    PASSWORD_REQUIRE_DIGIT: bool = True
+    PASSWORD_REQUIRE_SPECIAL: bool = False
+
     model_config = SettingsConfigDict(
         env_file=".env", env_ignore_empty=True, extra="ignore"
     )
