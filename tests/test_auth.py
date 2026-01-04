@@ -192,22 +192,21 @@ def test_logout(client: TestClient):
         data={"username": "logout@example.com", "password": "password123"},
     )
     token = login_res.json()["access_token"]
-    
+
     # Verify we can access protected endpoint
     response = client.get(
         "/api/v1/users/me",
         headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 200
-    
+
     # Logout
     response = client.post(
-        "/api/v1/login/logout",
-        headers={"Authorization": f"Bearer {token}"}
+        "/api/v1/login/logout", headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 200
     assert response.json() == {"message": "Successfully logged out"}
-    
+
     # Verify we can NO LONGER access protected endpoint
     response = client.get(
         "/api/v1/users/me",

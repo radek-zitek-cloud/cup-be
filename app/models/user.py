@@ -54,6 +54,7 @@ class Token(SQLModel):
 class TokenData(SQLModel):
     sub: str | None = None
 
+
 class TokenBlacklist(SQLModel, table=True):
     token: str = Field(primary_key=True, index=True)
     expires_at: datetime
