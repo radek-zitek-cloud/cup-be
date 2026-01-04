@@ -3,6 +3,9 @@ from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine, StaticPool
 from app.main import app
 from app.api.deps import get_db
+from app.core import security
+from app.models.user import User
+
 
 # Setup in-memory SQLite for testing
 DATABASE_URL = "sqlite://"
@@ -214,3 +217,64 @@ def test_logout(client: TestClient):
     )
     assert response.status_code == 401
     assert response.json()["detail"] == "Token has been revoked"
+
+
+def test_create_user_requires_auth(client: TestClient):
+    response = client.post(
+        "/api/v1/users/",
+        json={"email": "test@example.com", "password": "password123"},
+    )
+    assert response.status_code == 401
+
+
+def test_create_user_requires_admin(client: TestClient):
+    # Signup regular user
+    client.post(
+        "/api/v1/users/signup",
+        json={"email": "regular@example.com", "password": "password123"},
+    )
+    # Login regular user
+    login_res = client.post(
+        "/api/v1/login/access-token",
+        data={"username": "regular@example.com", "password": "password123"},
+    )
+    token = login_res.json()["access_token"]
+
+    response = client.post(
+        "/api/v1/users/",
+        headers={"Authorization": f"Bearer {token}"},
+        json={"email": "newuser@example.com", "password": "password123"},
+    )
+    assert response.status_code == 403
+    assert "Not enough permissions" in response.json()["detail"]
+
+
+def test_create_user_admin_success(client: TestClient, session: Session):
+    # Manually create a superuser in the DB
+    hashed_password = security.get_password_hash("adminpassword")
+    superuser = User(
+        email="admin@example.com", hashed_password=hashed_password, is_super=True
+    )
+    session.add(superuser)
+    session.commit()
+
+    # Login as admin
+    login_res = client.post(
+        "/api/v1/login/access-token",
+        data={"username": "admin@example.com", "password": "adminpassword"},
+    )
+    token = login_res.json()["access_token"]
+
+    # Create new user via admin endpoint
+    response = client.post(
+        "/api/v1/users/",
+        headers={"Authorization": f"Bearer {token}"},
+        json={
+            "email": "newuser@example.com",
+            "password": "password123",
+            "is_super": True,
+        },
+    )
+    assert response.status_code == 200
+    assert response.json()["email"] == "newuser@example.com"
+    assert response.json()["is_super"] is True

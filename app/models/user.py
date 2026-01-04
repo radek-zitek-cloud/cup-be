@@ -16,6 +16,13 @@ class UserCreate(UserBase):
     password: str
 
 
+class UserCreateAdmin(UserCreate):
+    """Admin-only user creation with all privileges."""
+
+    is_super: bool = False
+    is_active: bool = True
+
+
 # Properties to receive via API on update
 class UserUpdate(SQLModel):
     email: EmailStr | None = None

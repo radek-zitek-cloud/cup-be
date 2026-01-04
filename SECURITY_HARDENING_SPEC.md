@@ -211,12 +211,12 @@ def create_user(
 ```
 
 #### Acceptance Criteria
-- [ ] Endpoint requires authentication
-- [ ] Only superusers can create users
-- [ ] Returns 403 for non-admin users
-- [ ] Returns 401 for unauthenticated requests
-- [ ] Existing `/signup` endpoint still works publicly
-- [ ] Tests cover admin and non-admin scenarios
+- [x] Endpoint requires authentication
+- [x] Only superusers can create users
+- [x] Returns 403 for non-admin users
+- [x] Returns 401 for unauthenticated requests
+- [x] Existing `/signup` endpoint still works publicly
+- [x] Tests cover admin and non-admin scenarios
 
 #### Test Cases
 ```python

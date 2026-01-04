@@ -4,7 +4,14 @@ from sqlmodel import select
 
 from app.api import deps
 from app.core import security
-from app.models.user import User, UserCreate, UserPublic, UpdatePassword, UserUpdateMe
+from app.models.user import (
+    User,
+    UserCreate,
+    UserPublic,
+    UpdatePassword,
+    UserUpdateMe,
+    UserCreateAdmin,
+)
 
 router = APIRouter()
 
@@ -39,10 +46,12 @@ def signup(
 def create_user(
     *,
     session: deps.SessionDep,
-    user_in: UserCreate,
+    user_in: UserCreateAdmin,
+    current_user: deps.CurrentSuperUser,
 ) -> Any:
     """
-    Create new user (admin or internal).
+    Create new user (admin only).
+    Requires superuser permissions.
     """
     user = session.exec(select(User).where(User.email == user_in.email)).first()
     if user:

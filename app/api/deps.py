@@ -53,3 +53,18 @@ def get_current_user(session: SessionDep, token: TokenDep) -> User:
 
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
+
+
+def get_current_super_user(current_user: CurrentUser) -> User:
+    """
+    Dependency to verify current user is a superuser.
+    """
+    if not current_user.is_super:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not enough permissions",
+        )
+    return current_user
+
+
+CurrentSuperUser = Annotated[User, Depends(get_current_super_user)]
