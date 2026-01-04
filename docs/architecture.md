@@ -23,8 +23,10 @@ cup-be/
 │   ├── db/                 # Database connection and session
 │   ├── models/             # SQLModel database models
 │   └── main.py             # Application entry point
+├── scripts/                # Utility scripts (build, release, versioning)
 ├── tests/                  # Tests
 ├── docs/                   # Documentation
+├── CHANGELOG.md            # Project history
 ├── .env                    # Environment variables (ignored by git)
 ├── .env.example            # Example environment variables
 ├── Dockerfile              # Docker image definition

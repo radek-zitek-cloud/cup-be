@@ -22,6 +22,7 @@
 *   `alembic/`: Database migration scripts.
 *   `scripts/`: Utility scripts for building, releasing, etc.
 *   `tests/`: Pytest test suite (including `test_auth.py` for comprehensive auth testing).
+*   `CHANGELOG.md`: Record of all notable changes.
 *   `docker-compose.yml`: Local development environment definition.
 *   `pyproject.toml`: Project configuration and dependencies.
 
@@ -94,6 +95,11 @@ Migrations are handled by Alembic. **They are automatically run on application s
 Run the test suite using `pytest`:
 ```bash
 uv run pytest
+```
+
+Or run the full check (lint + format check + tests):
+```bash
+make check
 ```
 
 ### Documentation
