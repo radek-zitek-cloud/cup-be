@@ -3,7 +3,6 @@ from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine, StaticPool
 from app.main import app
 from app.api.deps import get_db
-from app.models.user import User
 
 # Setup in-memory SQLite for testing
 DATABASE_URL = "sqlite://"
@@ -13,6 +12,7 @@ engine = create_engine(
     poolclass=StaticPool,
 )
 
+
 @pytest.fixture(name="session")
 def session_fixture():
     SQLModel.metadata.create_all(engine)
@@ -20,20 +20,26 @@ def session_fixture():
         yield session
     SQLModel.metadata.drop_all(engine)
 
+
 @pytest.fixture(name="client")
 def client_fixture(session: Session):
     def get_db_override():
         return session
-    
+
     app.dependency_overrides[get_db] = get_db_override
     client = TestClient(app)
     yield client
     app.dependency_overrides.clear()
 
+
 def test_signup(client: TestClient):
     response = client.post(
         "/api/v1/users/signup",
-        json={"email": "test@example.com", "password": "password123", "full_name": "Test User"},
+        json={
+            "email": "test@example.com",
+            "password": "password123",
+            "full_name": "Test User",
+        },
     )
     assert response.status_code == 200
     data = response.json()
@@ -42,13 +48,14 @@ def test_signup(client: TestClient):
     assert data["is_super"] is False
     assert "id" in data
 
+
 def test_login(client: TestClient):
     # First signup
     client.post(
         "/api/v1/users/signup",
         json={"email": "test@example.com", "password": "password123"},
     )
-    
+
     # Then login
     response = client.post(
         "/api/v1/login/access-token",
@@ -60,6 +67,7 @@ def test_login(client: TestClient):
     assert "refresh_token" in data
     assert data["token_type"] == "bearer"
 
+
 def test_get_me(client: TestClient):
     client.post(
         "/api/v1/users/signup",
@@ -70,13 +78,14 @@ def test_get_me(client: TestClient):
         data={"username": "test@example.com", "password": "password123"},
     )
     token = login_res.json()["access_token"]
-    
+
     response = client.get(
         "/api/v1/users/me",
         headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 200
     assert response.json()["email"] == "test@example.com"
+
 
 def test_refresh_token(client: TestClient):
     client.post(
@@ -88,7 +97,7 @@ def test_refresh_token(client: TestClient):
         data={"username": "test@example.com", "password": "password123"},
     )
     refresh_token = login_res.json()["refresh_token"]
-    
+
     response = client.post(
         "/api/v1/login/refresh",
         json={"refresh_token": refresh_token},
@@ -98,17 +107,22 @@ def test_refresh_token(client: TestClient):
     assert "access_token" in data
     assert "refresh_token" in data
 
+
 def test_update_me(client: TestClient):
     client.post(
         "/api/v1/users/signup",
-        json={"email": "test@example.com", "password": "password123", "full_name": "Old Name"},
+        json={
+            "email": "test@example.com",
+            "password": "password123",
+            "full_name": "Old Name",
+        },
     )
     login_res = client.post(
         "/api/v1/login/access-token",
         data={"username": "test@example.com", "password": "password123"},
     )
     token = login_res.json()["access_token"]
-    
+
     response = client.patch(
         "/api/v1/users/me",
         headers={"Authorization": f"Bearer {token}"},
@@ -116,6 +130,7 @@ def test_update_me(client: TestClient):
     )
     assert response.status_code == 200
     assert response.json()["full_name"] == "New Name"
+
 
 def test_update_me_is_super_no_effect(client: TestClient):
     client.post(
@@ -127,7 +142,7 @@ def test_update_me_is_super_no_effect(client: TestClient):
         data={"username": "test@example.com", "password": "password123"},
     )
     token = login_res.json()["access_token"]
-    
+
     # Attempt to set is_super to True
     response = client.patch(
         "/api/v1/users/me",
@@ -139,6 +154,7 @@ def test_update_me_is_super_no_effect(client: TestClient):
     assert response.status_code == 200
     assert response.json()["is_super"] is False
 
+
 def test_update_password(client: TestClient):
     client.post(
         "/api/v1/users/signup",
@@ -149,7 +165,7 @@ def test_update_password(client: TestClient):
         data={"username": "test@example.com", "password": "password123"},
     )
     token = login_res.json()["access_token"]
-    
+
     response = client.patch(
         "/api/v1/users/me/password",
         headers={"Authorization": f"Bearer {token}"},
@@ -157,13 +173,14 @@ def test_update_password(client: TestClient):
     )
     assert response.status_code == 200
     assert response.json()["message"] == "Password updated successfully"
-    
+
     # Try login with new password
     response = client.post(
         "/api/v1/login/access-token",
         data={"username": "test@example.com", "password": "newpassword123"},
     )
     assert response.status_code == 200
+
 
 def test_logout(client: TestClient):
     response = client.post("/api/v1/login/logout")

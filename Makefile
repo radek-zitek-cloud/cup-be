@@ -1,4 +1,4 @@
-.PHONY: help up down restart logs build install dev test migrate make-migration docs bump-patch bump-minor bump-major release-patch release-minor release-major git-status git-push
+.PHONY: help up down restart logs build install dev test lint format check migrate make-migration docs bump-patch bump-minor bump-major release-patch release-minor release-major git-status git-push
 
 # Default target
 help:
@@ -14,6 +14,9 @@ help:
 	@echo "    make install         - Install dependencies with uv"
 	@echo "    make dev             - Run local development server"
 	@echo "    make test            - Run tests with pytest"
+	@echo "    make lint            - Check linting with ruff"
+	@echo "    make format          - Format code with ruff"
+	@echo "    make check           - Run lint, format check, and tests"
 	@echo ""
 	@echo "  Database:"
 	@echo "    make migrate         - Run Alembic migrations (local)"
@@ -60,6 +63,15 @@ dev:
 
 test:
 	uv run pytest
+
+lint:
+	uv run ruff check .
+
+format:
+	uv run ruff format .
+
+check: lint test
+	uv run ruff format --check .
 
 # Database
 migrate:
