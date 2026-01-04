@@ -8,7 +8,7 @@
 *   **Database:** PostgreSQL (v18)
 *   **ORM:** SQLModel
 *   **Migrations:** Alembic
-*   **Authentication:** Python-Jose (JWT) with Access & Refresh tokens, Bcrypt
+*   **Authentication:** Python-Jose (JWT) with Access & Refresh tokens, Bcrypt. **Token invalidation on logout via database blacklist.**
 *   **Dependency Management:** uv
 *   **Documentation:** MkDocs (Material theme)
 

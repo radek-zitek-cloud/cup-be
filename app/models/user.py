@@ -1,5 +1,6 @@
-from sqlmodel import Field, SQLModel
+from datetime import datetime
 from pydantic import EmailStr
+from sqlmodel import Field, SQLModel
 
 
 # Shared properties
@@ -52,3 +53,7 @@ class Token(SQLModel):
 
 class TokenData(SQLModel):
     sub: str | None = None
+
+class TokenBlacklist(SQLModel, table=True):
+    token: str = Field(primary_key=True, index=True)
+    expires_at: datetime

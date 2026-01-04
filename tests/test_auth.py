@@ -183,6 +183,35 @@ def test_update_password(client: TestClient):
 
 
 def test_logout(client: TestClient):
-    response = client.post("/api/v1/login/logout")
+    client.post(
+        "/api/v1/users/signup",
+        json={"email": "logout@example.com", "password": "password123"},
+    )
+    login_res = client.post(
+        "/api/v1/login/access-token",
+        data={"username": "logout@example.com", "password": "password123"},
+    )
+    token = login_res.json()["access_token"]
+    
+    # Verify we can access protected endpoint
+    response = client.get(
+        "/api/v1/users/me",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 200
+    
+    # Logout
+    response = client.post(
+        "/api/v1/login/logout",
+        headers={"Authorization": f"Bearer {token}"}
+    )
     assert response.status_code == 200
     assert response.json() == {"message": "Successfully logged out"}
+    
+    # Verify we can NO LONGER access protected endpoint
+    response = client.get(
+        "/api/v1/users/me",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Token has been revoked"

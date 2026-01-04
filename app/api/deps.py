@@ -7,7 +7,7 @@ from sqlmodel import Session, select
 
 from app.core.config import settings
 from app.db.session import engine
-from app.models.user import User, TokenData
+from app.models.user import User, TokenData, TokenBlacklist
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/login/access-token"
@@ -24,6 +24,16 @@ TokenDep = Annotated[str, Depends(reusable_oauth2)]
 
 
 def get_current_user(session: SessionDep, token: TokenDep) -> User:
+    # Check if token is blacklisted
+    blacklisted = session.exec(
+        select(TokenBlacklist).where(TokenBlacklist.token == token)
+    ).first()
+    if blacklisted:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token has been revoked",
+        )
+
     try:
         payload = jwt.decode(
             token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]

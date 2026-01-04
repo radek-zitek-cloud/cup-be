@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime, timezone
 from typing import Annotated, Any
 from fastapi import APIRouter, Depends, HTTPException, Body
 from fastapi.security import OAuth2PasswordRequestForm
@@ -9,7 +9,7 @@ from pydantic import ValidationError
 from app.api import deps
 from app.core import security
 from app.core.config import settings
-from app.models.user import Token, User, TokenData
+from app.models.user import Token, User, TokenData, TokenBlacklist
 
 router = APIRouter()
 
@@ -51,6 +51,16 @@ def refresh_token(
     """
     Refresh access token
     """
+    # Check if refresh token is blacklisted
+    blacklisted = session.exec(
+        select(TokenBlacklist).where(TokenBlacklist.token == refresh_token)
+    ).first()
+    if blacklisted:
+        raise HTTPException(
+            status_code=401,
+            detail="Token has been revoked",
+        )
+
     try:
         payload = jwt.decode(
             refresh_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
@@ -82,8 +92,38 @@ def refresh_token(
 
 
 @router.post("/login/logout")
-def logout() -> Any:
+def logout(
+    session: deps.SessionDep,
+    token: deps.TokenDep,
+    refresh_token: Annotated[str | None, Body(embed=True)] = None,
+) -> Any:
     """
-    Log out (client should also delete the token)
+    Log out and invalidate tokens.
     """
+    # Blacklist access token
+    try:
+        payload = jwt.decode(
+            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+        )
+        exp = payload.get("exp")
+        if exp:
+            expires_at = datetime.fromtimestamp(exp, tz=timezone.utc)
+            session.add(TokenBlacklist(token=token, expires_at=expires_at))
+    except (JWTError, ValidationError):
+        pass  # Token already invalid or expired
+
+    # Blacklist refresh token if provided
+    if refresh_token:
+        try:
+            payload = jwt.decode(
+                refresh_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+            )
+            exp = payload.get("exp")
+            if exp:
+                expires_at = datetime.fromtimestamp(exp, tz=timezone.utc)
+                session.add(TokenBlacklist(token=refresh_token, expires_at=expires_at))
+        except (JWTError, ValidationError):
+            pass
+
+    session.commit()
     return {"message": "Successfully logged out"}
