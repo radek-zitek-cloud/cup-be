@@ -97,11 +97,11 @@ app.add_middleware(
 ```
 
 #### Acceptance Criteria
-- [ ] CORS origins read from environment variable
-- [ ] Default to localhost in development
-- [ ] Explicit methods and headers (no wildcards)
-- [ ] Documentation updated with CORS configuration
-- [ ] Test that unauthorized origins are rejected
+- [x] CORS origins read from environment variable
+- [x] Default to localhost in development
+- [x] Explicit methods and headers (no wildcards)
+- [x] Documentation updated with CORS configuration
+- [x] Test that unauthorized origins are rejected
 
 #### Test Cases
 ```python
