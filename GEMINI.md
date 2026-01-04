@@ -55,7 +55,7 @@
 docker compose up -d --build
 
 # View logs
-docker compose logs -f web
+docker compose logs -f backend
 ```
 The API will be available at [http://localhost:8000](http://localhost:8000).
 

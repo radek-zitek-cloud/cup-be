@@ -42,7 +42,7 @@ We chose SQLModel because it combines SQLAlchemy and Pydantic, reducing code dup
 Alembic provides robust database migration capabilities, essential for evolving the database schema over time without data loss.
 
 ### 3. Docker & Docker Compose
-Containerization ensures that the development environment matches production as closely as possible, minimizing "it works on my machine" issues. `docker-compose` simplifies managing the multi-container setup (web + db).
+Containerization ensures that the development environment matches production as closely as possible, minimizing "it works on my machine" issues. `docker-compose` simplifies managing the multi-container setup (backend + db).
 
 ### 4. uv
 `uv` is used for package management due to its speed and efficiency in resolving and installing dependencies.

@@ -78,7 +78,7 @@ migrate:
 	uv run alembic upgrade head
 
 docker-migrate:
-	docker compose exec web uv run alembic upgrade head
+	docker compose exec backend uv run alembic upgrade head
 
 make-migration:
 	@if [ -z "$(msg)" ]; then echo "Error: msg is required. Usage: make make-migration msg=\"message\""; exit 1; fi

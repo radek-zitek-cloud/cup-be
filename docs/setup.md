@@ -31,14 +31,14 @@
     docker compose up -d --build
     ```
 
-    This command will build the Docker image and start the containers (web and db).
+    This command will build the Docker image and start the containers (backend and db).
 
 4.  **Run Migrations:**
 
     Apply the database migrations to set up the schema:
 
     ```bash
-    docker compose exec web uv run alembic upgrade head
+    docker compose exec backend uv run alembic upgrade head
     ```
 
 ## Development
@@ -62,5 +62,5 @@ Then open [http://localhost:8008](http://localhost:8008).
 To run tests inside the container:
 
 ```bash
-docker compose exec web uv run pytest
+docker compose exec backend uv run pytest
 ```
