@@ -5,10 +5,14 @@ from fastapi import Request, Response
 from fastapi.responses import JSONResponse
 from app.core.config import settings
 
+storage_uri = settings.REDIS_URL or "memory://"
+if settings.ENVIRONMENT == "test":
+    storage_uri = "memory://"
+
 limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["200/minute"],
-    storage_uri=settings.REDIS_URL or "memory://",
+    storage_uri=storage_uri,
     enabled=settings.ENVIRONMENT != "test",
 )
 
