@@ -37,7 +37,9 @@ def mask_sensitive_data(data: Any) -> Any:
     """
     if isinstance(data, dict):
         return {
-            k: "***MASKED***" if k.lower() in SENSITIVE_FIELDS else mask_sensitive_data(v)
+            k: "***MASKED***"
+            if k.lower() in SENSITIVE_FIELDS
+            else mask_sensitive_data(v)
             for k, v in data.items()
         }
     elif isinstance(data, list):
@@ -45,6 +47,8 @@ def mask_sensitive_data(data: Any) -> Any:
     elif isinstance(data, str):
         # Also try to mask tokens in strings (e.g. Bearer tokens)
         if any(field in data.lower() for field in ["bearer", "token"]):
-             # Simple regex to mask after 'Bearer ' or similar
-             return re.sub(r"(Bearer\s+)\S+", r"\1***MASKED***", data, flags=re.IGNORECASE)
+            # Simple regex to mask after 'Bearer ' or similar
+            return re.sub(
+                r"(Bearer\s+)\S+", r"\1***MASKED***", data, flags=re.IGNORECASE
+            )
     return data

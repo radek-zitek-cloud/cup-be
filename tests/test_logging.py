@@ -3,7 +3,6 @@ import os
 # Set environment to test BEFORE importing anything from app
 os.environ["ENVIRONMENT"] = "test"
 
-import json
 import logging
 import pytest
 from fastapi.testclient import TestClient
@@ -44,10 +43,7 @@ def test_mask_sensitive_data():
     data = {
         "email": "test@example.com",
         "password": "secretpassword",
-        "nested": {
-            "token": "sensitive_token",
-            "safe": "public_data"
-        }
+        "nested": {"token": "sensitive_token", "safe": "public_data"},
     }
     masked = mask_sensitive_data(data)
     assert masked["email"] == "test@example.com"
@@ -55,16 +51,18 @@ def test_mask_sensitive_data():
     assert masked["nested"]["token"] == "***MASKED***"
     assert masked["nested"]["safe"] == "public_data"
 
+
 def test_mask_authorization_header():
     header = "Bearer some_long_token_here"
     masked = mask_sensitive_data(header)
     assert masked == "Bearer ***MASKED***"
 
+
 def test_request_logging_middleware(client: TestClient, caplog):
     # Set log level to INFO to capture our logs
     caplog.set_level(logging.INFO)
 
-    response = client.post(
+    client.post(
         "/api/v1/users/signup",
         json={
             "email": "logging_test@example.com",
@@ -72,13 +70,15 @@ def test_request_logging_middleware(client: TestClient, caplog):
             "full_name": "Logging Test",
         },
     )
-    
+
     # Check that we have the request log
     assert "Incoming request: POST" in caplog.text
     assert "/api/v1/users/signup" in caplog.text
     assert "StrongPassword123" not in caplog.text
     assert "***MASKED***" in caplog.text
-    
+
     # Check that we have the completion log
     assert "Completed request: POST" in caplog.text
-    assert "Status: 200" in caplog.text or "Status: 400" in caplog.text # Depending if user already exists
+    assert (
+        "Status: 200" in caplog.text or "Status: 400" in caplog.text
+    )  # Depending if user already exists
