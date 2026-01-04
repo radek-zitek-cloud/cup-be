@@ -12,6 +12,8 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Integrated CORS middleware to allow cross-origin requests.
+- **Implemented Request Logging Middleware with sensitive data masking.**
+- **Added `app/core/logging.py` for centralized logging configuration.**
 
 ## [0.1.3] - 2026-01-03
 

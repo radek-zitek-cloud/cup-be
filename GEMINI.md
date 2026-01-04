@@ -16,8 +16,9 @@
 *   `app/`: Main application source code.
     *   `main.py`: Application entry point.
     *   `api/`: Route handlers (endpoints) and dependencies.
-    *   `core/`: Core configuration (`config.py`) and security logic.
+    *   `core/`: Core configuration (`config.py`), security logic, and logging.
     *   `db/`: Database session management.
+    *   `middleware/`: Custom middleware (logging, etc.).
     *   `models/`: SQLModel data models.
 *   `alembic/`: Database migration scripts.
 *   `scripts/`: Utility scripts for building, releasing, etc.
