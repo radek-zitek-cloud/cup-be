@@ -58,10 +58,7 @@ def test_mask_authorization_header():
     assert masked == "Bearer ***MASKED***"
 
 
-def test_request_logging_middleware(client: TestClient, caplog):
-    # Set log level to INFO to capture our logs
-    caplog.set_level(logging.INFO)
-
+def test_request_logging_middleware(client: TestClient, capsys):
     client.post(
         "/api/v1/users/signup",
         json={
@@ -71,14 +68,14 @@ def test_request_logging_middleware(client: TestClient, caplog):
         },
     )
 
-    # Check that we have the request log
-    assert "Incoming request: POST" in caplog.text
-    assert "/api/v1/users/signup" in caplog.text
-    assert "StrongPassword123" not in caplog.text
-    assert "***MASKED***" in caplog.text
+    captured = capsys.readouterr()
 
-    # Check that we have the completion log
-    assert "Completed request: POST" in caplog.text
-    assert (
-        "Status: 200" in caplog.text or "Status: 400" in caplog.text
-    )  # Depending if user already exists
+    # Check that we have the request log in stdout
+    assert "Incoming request: POST" in captured.out
+    assert "/api/v1/users/signup" in captured.out
+    assert "StrongPassword123" not in captured.out
+    assert "***MASKED***" in captured.out
+
+    # Check that we have the completion log in stdout
+    assert "Completed request: POST" in captured.out
+    assert "Status: 200" in captured.out or "Status: 400" in captured.out

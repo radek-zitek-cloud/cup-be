@@ -16,10 +16,14 @@ logging.basicConfig(
 )
 
 def log_info(message: str):
-    """Directly print to stdout with timestamp and prefix."""
+    """Directly print to stdout with timestamp and prefix for Docker visibility, and log via standard logger for tests."""
     from datetime import datetime
+
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S,%f")[:-3]
     print(f"{timestamp} - cup-be - INFO - {message}", flush=True)
+    # Also log to standard logging so caplog can see it in tests
+    logger.info(message)
+
 
 logger = logging.getLogger("cup-be")
 log_info("Logging system initialized")
