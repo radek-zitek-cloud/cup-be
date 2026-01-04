@@ -17,4 +17,4 @@ TAG=$VERSION docker compose build web
 # Also tag as latest
 TAG=latest docker compose build web
 
-echo "Successfully built cup-be-web:$VERSION and cup-be-web:latest"
+echo "Successfully built cup-be:$VERSION and cup-be:latest"
