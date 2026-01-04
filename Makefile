@@ -78,13 +78,13 @@ docs:
 
 # Version & Release
 bump-patch:
-	uv run python scripts/bump_version.py patch
+	./scripts/bump_version.sh patch
 
 bump-minor:
-	uv run python scripts/bump_version.py minor
+	./scripts/bump_version.sh minor
 
 bump-major:
-	uv run python scripts/bump_version.py major
+	./scripts/bump_version.sh major
 
 release-patch:
 	./scripts/release.sh patch

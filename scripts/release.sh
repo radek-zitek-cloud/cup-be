@@ -15,7 +15,7 @@ if [ -n "$(git status --porcelain)" ]; then
 fi
 
 echo "Bumping $BUMP_TYPE version..."
-NEW_VERSION=$(uv run python scripts/bump_version.py "$BUMP_TYPE")
+NEW_VERSION=$(./scripts/bump_version.sh "$BUMP_TYPE")
 
 if [ -z "$NEW_VERSION" ]; then
     echo "Error: Failed to bump version."
