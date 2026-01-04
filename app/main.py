@@ -1,5 +1,8 @@
+from app.core import logging as _logging_config  # Initialize logging
+import time
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+
 from fastapi.middleware.cors import CORSMiddleware
 from alembic import command
 from alembic.config import Config
@@ -50,4 +53,4 @@ def read_root():
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("app.main:app", host="0.0.0.0", port=80, log_config=None, reload=True)

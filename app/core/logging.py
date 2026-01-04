@@ -3,21 +3,26 @@ import sys
 import re
 from typing import Any
 
-# Configure logging
+# Remove all existing handlers from root logger
+for h in logging.root.handlers[:]:
+    logging.root.removeHandler(h)
+
+# Configure logging to stdout
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     stream=sys.stdout,
+    force=True
 )
 
-# Also ensure uvicorn loggers are at INFO level
-for logger_name in ("uvicorn", "uvicorn.error", "uvicorn.access"):
-    logging.getLogger(logger_name).setLevel(logging.INFO)
+def log_info(message: str):
+    """Directly print to stdout with timestamp and prefix."""
+    from datetime import datetime
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S,%f")[:-3]
+    print(f"{timestamp} - cup-be - INFO - {message}", flush=True)
 
 logger = logging.getLogger("cup-be")
-logger.setLevel(logging.INFO)
-# Ensure it propagates to root if not already
-logger.propagate = True
+log_info("Logging system initialized")
 
 SENSITIVE_FIELDS = {
     "password",
