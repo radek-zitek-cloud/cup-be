@@ -62,7 +62,7 @@ dev:
 	uv run uvicorn app.main:app --reload
 
 test:
-	uv run pytest
+	ENVIRONMENT=test uv run pytest
 
 lint:
 	uv run ruff check .

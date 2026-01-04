@@ -1,6 +1,6 @@
 from datetime import timedelta, datetime, timezone
 from typing import Annotated, Any
-from fastapi import APIRouter, Depends, HTTPException, Body
+from fastapi import APIRouter, Depends, HTTPException, Body, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import select
 from jose import jwt, JWTError
@@ -9,14 +9,18 @@ from pydantic import ValidationError
 from app.api import deps
 from app.core import security
 from app.core.config import settings
+from app.core.ratelimit import limiter
 from app.models.user import Token, User, TokenData, TokenBlacklist
 
 router = APIRouter()
 
 
 @router.post("/login/access-token", response_model=Token)
+@limiter.limit(settings.RATE_LIMIT_LOGIN)
 def login_access_token(
-    session: deps.SessionDep, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+    request: Request,
+    session: deps.SessionDep,
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Token:
     """
     OAuth2 compatible token login, get an access token for future requests
@@ -45,8 +49,11 @@ def login_access_token(
 
 
 @router.post("/login/refresh", response_model=Token)
+@limiter.limit("10/minute")
 def refresh_token(
-    session: deps.SessionDep, refresh_token: Annotated[str, Body(embed=True)]
+    request: Request,
+    session: deps.SessionDep,
+    refresh_token: Annotated[str, Body(embed=True)],
 ) -> Any:
     """
     Refresh access token

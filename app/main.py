@@ -3,9 +3,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from alembic import command
 from alembic.config import Config
+from slowapi.errors import RateLimitExceeded
 
 from app.core.config import settings
 from app.api.api_v1.api import api_router
+from app.core.ratelimit import limiter, rate_limit_handler
 
 
 @asynccontextmanager
@@ -21,6 +23,9 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     lifespan=lifespan,
 )
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 
 app.add_middleware(
     CORSMiddleware,

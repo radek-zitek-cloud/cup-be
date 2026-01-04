@@ -1,9 +1,11 @@
 from typing import Any
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from sqlmodel import select
 
 from app.api import deps
 from app.core import security
+from app.core.config import settings
+from app.core.ratelimit import limiter
 from app.models.user import (
     User,
     UserCreate,
@@ -17,8 +19,10 @@ router = APIRouter()
 
 
 @router.post("/signup", response_model=UserPublic)
+@limiter.limit(settings.RATE_LIMIT_SIGNUP)
 def signup(
     *,
+    request: Request,
     session: deps.SessionDep,
     user_in: UserCreate,
 ) -> Any:
@@ -43,8 +47,10 @@ def signup(
 
 
 @router.post("/", response_model=UserPublic)
+@limiter.limit("10/minute")
 def create_user(
     *,
+    request: Request,
     session: deps.SessionDep,
     user_in: UserCreateAdmin,
     current_user: deps.CurrentSuperUser,

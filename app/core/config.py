@@ -16,6 +16,7 @@ def parse_cors(v: Any) -> list[str] | str:
 class Settings(BaseSettings):
     PROJECT_NAME: str
     API_V1_STR: str
+    ENVIRONMENT: str = "dev"
 
     # POSTGRES
     POSTGRES_SERVER: str
@@ -34,6 +35,11 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: Annotated[list[str] | str, BeforeValidator(parse_cors)] = [
         "http://localhost:3000"
     ]
+
+    # Rate Limiting
+    RATE_LIMIT_LOGIN: str = "5/minute"
+    RATE_LIMIT_SIGNUP: str = "3/hour"
+    REDIS_URL: str | None = None  # For production: redis://localhost:6379
 
     model_config = SettingsConfigDict(
         env_file=".env", env_ignore_empty=True, extra="ignore"

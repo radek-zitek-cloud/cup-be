@@ -356,13 +356,13 @@ limiter = Limiter(
 ```
 
 #### Acceptance Criteria
-- [ ] Login endpoint limited to 5 attempts/minute per IP
-- [ ] Signup endpoint limited to 3 attempts/hour per IP
-- [ ] Returns 429 status code when rate limit exceeded
-- [ ] Includes retry-after header in response
-- [ ] Uses Redis for distributed rate limiting in production
-- [ ] Rate limits configurable via environment variables
-- [ ] Tests verify rate limiting works
+- [x] Login endpoint limited to 5 attempts/minute per IP
+- [x] Signup endpoint limited to 3 attempts/hour per IP
+- [x] Returns 429 status code when rate limit exceeded
+- [x] Includes retry-after header in response
+- [x] Uses Redis for distributed rate limiting in production
+- [x] Rate limits configurable via environment variables
+- [x] Tests verify rate limiting works
 
 #### Test Cases
 ```python
