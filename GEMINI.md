@@ -5,7 +5,7 @@
 
 ### Key Technologies
 *   **Framework:** FastAPI
-*   **Database:** PostgreSQL (v18)
+*   **Database:** PostgreSQL (v18), Redis (v8)
 *   **ORM:** SQLModel
 *   **Migrations:** Alembic
 *   **Authentication:** Python-Jose (JWT) with Access & Refresh tokens, Bcrypt. **Token invalidation on logout via database blacklist.**

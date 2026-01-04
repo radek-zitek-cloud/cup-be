@@ -8,19 +8,54 @@ services:
     ports:
       - "5432:5432"
 
-  backend:
-    build: .
-    image: cup-be:${TAG:-latest}
-    container_name: backend-1
-    ports:
-      - "8000:80"
-    env_file:
-      - .env
-    depends_on:
-      - db
-    volumes:
-      - .:/app
-      - /app/.venv
+    backend:
 
-volumes:
-  postgres_data:
+      build: .
+
+      image: cup-be:${TAG:-latest}
+
+      container_name: backend-1
+
+      ports:
+
+        - "8000:80"
+
+      env_file:
+
+        - .env
+
+      depends_on:
+
+        - db
+
+        - redis
+
+      volumes:
+
+        - .:/app
+
+        - /app/.venv
+
+  
+
+    redis:
+
+      image: redis:8-alpine
+
+      ports:
+
+        - "6379:6379"
+
+      volumes:
+
+        - redis_data:/data
+
+  
+
+  volumes:
+
+    postgres_data:
+
+    redis_data:
+
+  
