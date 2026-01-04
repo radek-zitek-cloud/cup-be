@@ -46,7 +46,7 @@ def validate_password_strength(password: str) -> str:
 
     if errors:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Password must contain {', '.join(errors)}",
         )
 
